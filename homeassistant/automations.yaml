@@ -1,0 +1,111 @@
+###############################################################################
+# Beispiel-Automatisierungen für Nugget LIN-Bus Bridge
+#
+# Einbinden in configuration.yaml oder via UI in Automatisierungen importieren
+###############################################################################
+
+automation:
+  # 1. Kühlbox Schimmelschutz
+  # Alarm wenn Feuchte hoch UND Temperatur warm — typisch wenn die Kühlbox
+  # längere Zeit AUS ist und Restfeuchte zu Schimmel führen könnte
+  - alias: "Nugget: Kühlbox Schimmelschutz"
+    description: "Warnt vor Schimmelbildung in der Kühlbox"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.kuehlbox_humidity   # Shelly BLU H&T in Kühlbox
+        above: 75
+        for:
+          minutes: 15
+    condition:
+      - condition: numeric_state
+        entity_id: sensor.nugget_t_kuehlbox
+        above: 10
+      - condition: state
+        entity_id: switch.nugget_kuehlbox
+        state: "off"
+    action:
+      - service: notify.mobile_app
+        data:
+          title: "Nugget Warnung"
+          message: "Kühlbox: Feuchte {{ states('sensor.kuehlbox_humidity') }}% bei {{ states('sensor.nugget_t_kuehlbox') }}°C — Schimmelgefahr!"
+
+  # 2. Frischwasser leer
+  - alias: "Nugget: Frischwasser leer"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.nugget_wasser_frisch
+        below: 25
+    action:
+      - service: notify.mobile_app
+        data:
+          title: "Nugget"
+          message: "Frischwassertank fast leer ({{ states('sensor.nugget_wasser_frisch') }}%)"
+
+  # 3. Grauwasser voll
+  - alias: "Nugget: Grauwasser voll"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.nugget_wasser_grau
+        above: 80
+    action:
+      - service: notify.mobile_app
+        data:
+          title: "Nugget"
+          message: "Grauwassertank fast voll ({{ states('sensor.nugget_wasser_grau') }}%)"
+
+  # 4. Batterie kritisch
+  - alias: "Nugget: Batterie kritisch"
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.nugget_batt_soc
+        below: 20
+    action:
+      - service: notify.mobile_app
+        data:
+          title: "Nugget"
+          message: "Aufbaubatterie nur noch {{ states('sensor.nugget_batt_soc') }}%"
+
+  # 5. Heizung Fehler
+  - alias: "Nugget: Heizung Fehler"
+    trigger:
+      - platform: state
+        entity_id: sensor.nugget_heiz_fehler
+        from: "--"
+    condition:
+      - condition: template
+        value_template: "{{ not is_state('sensor.nugget_heiz_fehler', '--') }}"
+    action:
+      - service: notify.mobile_app
+        data:
+          title: "Nugget Heizung"
+          message: "Fehler: {{ states('sensor.nugget_heiz_fehler') }}"
+
+  # 6. Bei Zündung an — Heizung ausschalten (Sicherheit)
+  - alias: "Nugget: Heizung bei Motorstart AUS"
+    trigger:
+      - platform: state
+        entity_id: sensor.nugget_motor
+        to: "LÄUFT"
+    condition:
+      - condition: state
+        entity_id: switch.nugget_heizung
+        state: "on"
+    action:
+      - service: switch.turn_off
+        target:
+          entity_id: switch.nugget_heizung
+
+###############################################################################
+# Binary Sensor: Ladegerät 230V-Anschluss
+###############################################################################
+binary_sensor:
+  - platform: mqtt
+    name: "Nugget Ladegerät"
+    unique_id: nugget_charger_binary
+    state_topic: "homeassistant/nugget/state"
+    value_template: >
+      {% if value_json.charger_status == 'Verbunden' %}ON{% else %}OFF{% endif %}
+    payload_on: "ON"
+    payload_off: "OFF"
+    icon: mdi:ev-station
+    device_class: plug

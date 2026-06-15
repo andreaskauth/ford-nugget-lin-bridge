@@ -1,0 +1,131 @@
+###############################################################################
+# Beispiel Lovelace Dashboard für Nugget LIN-Bus Bridge
+#
+# Speicherort: Settings → Dashboards → Neues Dashboard → "Raw configuration"
+###############################################################################
+
+title: Ford Nugget
+views:
+  - title: Übersicht
+    icon: mdi:rv-truck
+    cards:
+      # Temperatur-Karte
+      - type: glance
+        title: Temperaturen
+        entities:
+          - entity: sensor.nugget_t_innen
+            name: Innen
+          - entity: sensor.nugget_t_aussen
+            name: Außen
+          - entity: sensor.nugget_t_kuehlbox
+            name: Kühlbox
+          - entity: sensor.nugget_t_auslass
+            name: Heizung
+
+      # Heizung
+      - type: entities
+        title: Standheizung
+        icon: mdi:fire
+        entities:
+          - entity: switch.nugget_heizung
+          - entity: number.nugget_heiz_soll
+            name: Soll-Temperatur
+          - entity: sensor.nugget_heiz_status
+            name: Status
+          - entity: sensor.nugget_heiz_fehler
+            name: Fehlercode
+
+      # Wasser
+      - type: vertical-stack
+        cards:
+          - type: gauge
+            entity: sensor.nugget_wasser_frisch
+            name: Frischwasser
+            min: 0
+            max: 100
+            severity:
+              green: 50
+              yellow: 25
+              red: 0
+          - type: gauge
+            entity: sensor.nugget_wasser_grau
+            name: Grauwasser
+            min: 0
+            max: 100
+            severity:
+              green: 0
+              yellow: 60
+              red: 80
+          - type: entities
+            entities:
+              - entity: switch.nugget_pumpe
+              - entity: sensor.nugget_wasser_hahn
+
+      # Kühlbox
+      - type: entities
+        title: Kühlbox
+        icon: mdi:snowflake
+        entities:
+          - entity: switch.nugget_kuehlbox
+          - entity: number.nugget_kuehl_stufe
+          - entity: sensor.nugget_kuehl_komp
+            name: Kompressor
+          - entity: sensor.nugget_t_kuehlbox
+            name: Temperatur
+
+      # Licht
+      - type: entities
+        title: Licht
+        icon: mdi:lightbulb
+        entities:
+          - entity: switch.nugget_licht
+          - entity: number.nugget_licht_hell
+            name: Helligkeit
+
+      # Batterie
+      - type: vertical-stack
+        cards:
+          - type: gauge
+            entity: sensor.nugget_batt_soc
+            name: Ladestand
+            min: 0
+            max: 100
+            severity:
+              green: 50
+              yellow: 30
+              red: 20
+          - type: entities
+            title: Batterie (Hella IBS)
+            entities:
+              - entity: sensor.nugget_batt_volt
+              - entity: sensor.nugget_batt_amp
+              - entity: sensor.nugget_batt_soh
+              - entity: sensor.nugget_batt_temp
+
+      # Solar
+      - type: entities
+        title: Solar
+        icon: mdi:solar-power
+        entities:
+          - entity: sensor.nugget_solar_strom
+          - entity: sensor.nugget_solar_spannung
+          - entity: sensor.nugget_solar_modus
+
+      # Ladegerät
+      - type: entities
+        title: Ladegerät (230V)
+        icon: mdi:ev-station
+        entities:
+          - entity: binary_sensor.nugget_ladegeraet
+            name: 230V Anschluss
+          - entity: sensor.nugget_charger_strom
+          - entity: sensor.nugget_charger_spannung
+
+      # Fahrzeug
+      - type: glance
+        title: Fahrzeug
+        entities:
+          - entity: sensor.nugget_zuendung
+            name: Zündung
+          - entity: sensor.nugget_motor
+            name: Motor
