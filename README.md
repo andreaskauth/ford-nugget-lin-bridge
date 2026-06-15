@@ -6,6 +6,11 @@ ESP32-basierte Bridge zwischen dem LIN-Bus eines Ford Nugget (Westfalia/Hobby Wo
 [![Platform: ESP32](https://img.shields.io/badge/Platform-ESP32-blue.svg)](https://www.espressif.com/)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-Compatible-41BDF5.svg)](https://www.home-assistant.io/)
 
+## Vorwort
+
+Diese Doku ist mit Claude.AI - Verschiedene Modelle entstanden und noch nicht ausgereift, jedoch vollständig funktionsfähig. Mit Version 9.0 habe ich die Firmware-Datei des LIN-Bus-ESP von AndiM (herzlichen Dank dafür) überlassen bekommen und selbst weiterentwickelt - in der Firmware findet ihr die Historie meiner Zufügungen.
+Das ganze funktioniert auch ohne Homeassistant - der ESP gibt die MQTTs raus und ihr könnt damit machen was ihr wollt - mir war es aber wichtig, das alte Display vollständig zu ersetzen. Unter Issues ein paar mir bekannte Bugs, die aktuell meinen Campingalltag jedoch nicht einschränken.
+
 ## Überblick
 
 Diese Bridge ersetzt das originale Westfalia/Hobby Displaypanel und ermöglicht:
