@@ -124,4 +124,5 @@ MIT License — siehe [LICENSE](LICENSE).
 
 - [sevenwatt.com](http://sevenwatt.com) für die Dometic PerfectCharge Protokoll-Dokumentation
 - Die Community bei [Pössl/Westfalia Forum](https://www.womoforum.de/) für Hinweise zum LIN-Bus
+- AndiM und weitere aus dem Nuggetforum (https://www.nuggetforum.de/)
 - Alle die mit Tests und Issues beigetragen haben
